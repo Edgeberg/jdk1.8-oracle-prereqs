@@ -1,12 +1,11 @@
 name: RPM Build
 on:
   push:
-    branches: [ main ]
     tags:
       - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
 
-  # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
+  # To be able to run this workflow manually from the Actions tab, uncomment this:
+  # workflow_dispatch:
 
 jobs:
   build:
