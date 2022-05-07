@@ -38,10 +38,10 @@ jobs:
         with:
           spec_file: "jdk1.8-oracle-prereqs.spec"
 
-      - name: Upload Release Asset
+      - name: Upload Source Release Asset
         # This pulls from the steps above, referencing their ID to get the output object, which for create_release includes an 'upload_url'.
         # See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
-        id: upload-release-asset
+        id: upload-source-release-asset
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ github.token }}
@@ -49,4 +49,17 @@ jobs:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ${{ steps.rpm_build.outputs.source_rpm_path }}
           asset_name: ${{ steps.rpm_build.outputs.source_rpm_name }}
+          asset_content_type: ${{ steps.rpm_build.outputs.rpm_content_type }}
+
+      - name: Upload Binary Release Asset
+        # This pulls from the steps above, referencing their ID to get the output object, which for create_release includes an 'upload_url'.
+        # See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
+        id: upload-binary-release-asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ${{ steps.rpm_build.outputs.rpm_dir_path }}
+          asset_name: "Binary Package"
           asset_content_type: ${{ steps.rpm_build.outputs.rpm_content_type }}
