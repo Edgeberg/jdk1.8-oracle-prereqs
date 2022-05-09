@@ -57,6 +57,7 @@ jobs:
         uses: actions/upload-artifact@v1.0.0
         env:
           GITHUB_TOKEN: ${{ github.token }}
+          SOURCE_RPM_NAME: ${{ steps.rpm_build.outputs.source_rpm_name }}
         with:
-          path: ${{ steps.rpm_build.outputs.rpm_dir_path }}/*
+          path: ${{ steps.rpm_build.outputs.rpm_dir_path }}/${SOURCE_RPM_NAME/.src./.noarch.}
           name: Binary RPM
