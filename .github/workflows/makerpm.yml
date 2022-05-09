@@ -58,5 +58,5 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
         with:
-          path: ${{ steps.rpm_build.outputs.rpm_dir_path }}
+          path: ${{ steps.rpm_build.outputs.rpm_dir_path }}/*
           name: Binary RPM
