@@ -41,8 +41,9 @@ jobs:
           tag_name: ${{ github.ref }}
           release_name: Release ${{ github.ref }}
           body: |
-            Automatic actions completed:
-            - Create RPM
+            Automatic actions completed on push of tag ${{ github.ref }}:
+            - Create Release
+            - Build RPM
             - Upload Source RPM
             - Upload Binary RPM
           draft: false
