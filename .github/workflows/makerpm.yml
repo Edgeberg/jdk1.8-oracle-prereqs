@@ -51,13 +51,22 @@ jobs:
           asset_name: ${{ steps.rpm_build.outputs.source_rpm_name }}
           asset_content_type: ${{ steps.rpm_build.outputs.rpm_content_type }}
 
+      - name: Compute Binary RPM Name
+        id: get-rpm-name
+        outputs:
+          brpmname: ${{ steps.bash-magic.outputs.rpmname }}
+        env:
+          SOURCE_RPM_NAME: ${{ steps.rpm_build.outputs.source_rpm_name }}
+        steps:
+          - id: bash-magic
+            run: echo "::set-output name=rpmname::${SOURCE_RPM_NAME/.src./.noarch.}"
+
       - name: Upload Binary Release Asset
         # From 1st example in naveenrajm7/rpmbuild README.md
         id: upload-binary-release-asset
         uses: actions/upload-artifact@v1.0.0
         env:
           GITHUB_TOKEN: ${{ github.token }}
-          SOURCE_RPM_NAME: ${{ steps.rpm_build.outputs.source_rpm_name }}
         with:
-          path: ${{ steps.rpm_build.outputs.rpm_dir_path }}/${SOURCE_RPM_NAME/.src./.noarch.}
-          name: Binary RPM
+          path: ${{ steps.rpm_build.outputs.rpm_dir_path }}/${{ steps.get-rpm-name.outputs.brpmname }}
+          name: ${{ steps.get-rpm-name.outputs.brpmname }}
