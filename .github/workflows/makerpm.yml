@@ -8,9 +8,24 @@ on:
   # workflow_dispatch:
 
 jobs:
+  compute-name:
+    name: Compute Binary RPM Name
+    runs-on: ubuntu-latest
+    outputs:
+      brpmname: ${{ steps.bash-magic.outputs.rpmname }}
+
+    steps:
+      - name: Do some bash magic
+        id: bash-magic
+        env:
+          REPOS_NAME: ${{ github.repository }}
+          TAGVER: ${{ github.ref }}
+        run: echo "::set-output name=rpmname::${REPOS_NAME#*/}-$TAGVER.el7.noarch.rpm"
+
   build:
     name: Create RPM Release
     runs-on: ubuntu-latest
+    needs: compute-name
 
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
@@ -51,16 +66,6 @@ jobs:
           asset_name: ${{ steps.rpm_build.outputs.source_rpm_name }}
           asset_content_type: ${{ steps.rpm_build.outputs.rpm_content_type }}
 
-      - name: Compute Binary RPM Name
-        id: get-rpm-name
-        outputs:
-          brpmname: ${{ steps.bash-magic.outputs.rpmname }}
-        env:
-          SOURCE_RPM_NAME: ${{ steps.rpm_build.outputs.source_rpm_name }}
-        steps:
-          - id: bash-magic
-            run: echo "::set-output name=rpmname::${SOURCE_RPM_NAME/.src./.noarch.}"
-
       - name: Upload Binary Release Asset
         # From 1st example in naveenrajm7/rpmbuild README.md
         id: upload-binary-release-asset
@@ -69,4 +74,4 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
         with:
           path: ${{ steps.rpm_build.outputs.rpm_dir_path }}/${{ steps.get-rpm-name.outputs.brpmname }}
-          name: ${{ steps.get-rpm-name.outputs.brpmname }}
+          name: ${{ needs.compute-name.outputs.brpmname }}
