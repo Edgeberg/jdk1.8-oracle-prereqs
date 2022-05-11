@@ -20,7 +20,7 @@ jobs:
         env:
           REPOS_NAME: ${{ github.repository }}
           TAGVER: ${{ github.ref }}
-        run: echo "::set-output name=rpmname::${REPOS_NAME#*/}-$TAGVER.el7.noarch.rpm"
+        run: echo "::set-output name=rpmname::${REPOS_NAME#*/}-${TAGVER##*/}.el7.noarch.rpm"
 
   build:
     name: Create RPM Release
