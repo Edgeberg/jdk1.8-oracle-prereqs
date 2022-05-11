@@ -12,17 +12,23 @@ jobs:
     name: Compute Binary RPM Name
     runs-on: ubuntu-latest
     outputs:
-      brpmname: ${{ steps.bash-magic.outputs.rpmname }}
-      thistag: ${{ steps.bash-magic.outputs.tagname }}
+      brpmname: ${{ steps.bash-rpmname.outputs.rpmname }}
+      thistag: ${{ steps.bash-tagname.outputs.tagname }}
 
     steps:
-      - name: Do some bash magic
-        id: bash-magic
+      - name: Get rpm name via bash command
+        id: bash-rpmname
         env:
           REPOS_NAME: ${{ github.repository }}
           TAGVER: ${{ github.ref }}
         run:
           echo "::set-output name=rpmname::${REPOS_NAME#*/}-${TAGVER##*/v}.el7.noarch.rpm"
+
+      - name: Get plain tag name via bash command
+        id: bash-tagname
+        env:
+          TAGVER: ${{ github.ref }}
+        run:
           echo "::set-output name=tagname::${TAGVER##*/}"
 
   build:
